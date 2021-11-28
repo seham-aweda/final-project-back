@@ -10,6 +10,8 @@ app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use('/api/users',require('./Routes/user.route'))
+app.use('/api/bmi',require('./Routes/bmi.route'))
 
 mongoose.connect('mongodb://localhost/finalProject', {useNewUrlParser: true},()=>{
     console.log(('connected to DB'))
