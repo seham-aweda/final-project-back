@@ -28,12 +28,12 @@ userModel.findByIdAndUpdate(userId,{bmi:bmiId},{new:true,runValidators:true},(er
 
 const LogIn=async(req,res)=>{
     try{
-        const user=await userModel.findByCredentials(req.body.email,req.body.password)
+        const user=await userModel.findByCredentials(req,res,req.body.email,req.body.password)
         const token = await user.generateAuthToken()
 
         res.status(200).json({user,token})
     }catch(e){
-        res.status(240).json()
+        res.status(240).send()
     }
 }
 
@@ -48,6 +48,17 @@ const logOut=async (req,res)=>{
         res.status(500).send()
     }
 }
+
+const logOutAll=async(req,res)=>{
+    try {
+        req.user.tokens = []
+        await req.user.save()
+        res.status(200).send(req.user)
+    }catch(e){
+        res.status(500).send()
+    }
+
+}
 module.exports = {
-    getAllUsers,Register,LogIn,addingBMIToUser,logOut
+    getAllUsers,Register,LogIn,addingBMIToUser,logOut,logOutAll
 }

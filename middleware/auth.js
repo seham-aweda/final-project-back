@@ -2,9 +2,9 @@ const jwt=require('jsonwebtoken')
 const userModel=require('../Models/user.model').User
 
 const auth=async(req,res,next)=>{
-    try{console.log('fff')
+    try{
         const token = req.header('Authorization').replace('Bearer ', '')
-        console.log('token',token)
+
         const decoded = jwt.verify(token, 'thisismyfirstwebtoken')
         const user = await userModel.findOne({ _id: decoded._id, 'tokens.token': token })
     if(!user){
