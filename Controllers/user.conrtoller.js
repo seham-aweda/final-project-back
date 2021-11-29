@@ -1,73 +1,78 @@
-const userModel=require('../Models/user.model').User
+const userModel = require('../Models/user.model').User
+const bmiModel = require('../Models/user.model').BMI
 
-const getAllUsers= async (req,res)=>{
-    userModel.find({}).populate('bmi').exec((err,users)=>{
-        if(err) return res.status(240).send(err)
+const getAllUsers = async (req, res) => {
+    userModel.find({}).populate('bmi').exec((err, users) => {
+        if (err) return res.status(240).send(err)
         return res.status(200).send(users)
     })
 }
-const Register=async(req,res)=>{
-    const user=new userModel(req.body)
-    try{
+const Register = async (req, res) => {
+    const user = new userModel(req.body)
+    try {
         await user.save()
         const token = await user.generateAuthToken()
 
         res.status(201).json({user, token})
-    }catch (e){
+    } catch (e) {
         res.status(240).send(e)
     }
 }
 
-const addingBMIToUser=(req,res)=>{
-    const {userId,bmiId}=req.params
-userModel.findByIdAndUpdate(userId,{bmi:bmiId},{new:true,runValidators:true},(err,user)=>{
-    if(err) return res.status(240).send(err)
-    return res.status(200).send(user)
-})
+const addingBMIToUser = (req, res) => {
+    const {userId, bmiId} = req.params
+    userModel.findByIdAndUpdate(userId, {bmi: bmiId}, {new: true, runValidators: true}, (err, user) => {
+        if (err) return res.status(240).send(err)
+        return res.status(200).send(user)
+    })
 }
 
-const LogIn=async(req,res)=>{
-    try{
-        const user=await userModel.findByCredentials(req,res,req.body.email,req.body.password)
+const LogIn = async (req, res) => {
+    try {
+        const user = await userModel.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
 
-        res.status(200).json({user,token})
-    }catch(e){
+        res.status(200).json({user, token})
+    } catch (e) {
         res.status(240).send()
     }
 }
 
-const logOut=async (req,res)=>{
-    try{
-        req.user.tokens=req.user.tokens.filter(token=>{
-            return token.token!== req.token
+const logOut = async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(token => {
+            return token.token !== req.token
         })
         await req.user.save()
         res.status(200).send(req.user)
-    }catch(e){
+    } catch (e) {
         res.status(240).send()
     }
 }
 
-const logOutAll=async(req,res)=>{
+const logOutAll = async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
         res.status(200).send(req.user)
-    }catch(e){
+    } catch (e) {
         res.status(240).send()
     }
 
 }
 
-const DeleteUser=(req,res)=>{
-    const id=req.user._id
-   userModel.findByIdAndDelete(id,(err,data)=>{
-       if(err) return res.status(240).send(err)
-       if (data) return res.status(200).json({deleted:data})
-   })
-
+const DeleteUser = (req, res) => {
+    const id = req.user._id
+    const bmiId = req.user.bmi
+    userModel.findByIdAndDelete(id, (err, user) => {
+        if (err) return res.status(240).send(err)
+        bmiModel.findByIdAndDelete(bmiId, (err, bmi) => {
+            if (err) return res.status(240).send(err)
+            if (bmi) return res.status(200).json({deletedUser: user, deletedBMI: bmi})
+        })
+    })
 }
+
 module.exports = {
     getAllUsers,
     Register,
