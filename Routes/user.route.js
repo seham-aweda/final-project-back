@@ -24,4 +24,7 @@ await control.logOut(req,res)
 router.post('/logoutAll',auth,async(req,res)=>{
 await control.logOutAll(req,res)
 })
+router.delete('/delete/me',auth,async(req,res)=>{
+    await control.DeleteUser(req,res)
+})
 module.exports=router

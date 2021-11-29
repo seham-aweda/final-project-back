@@ -43,9 +43,9 @@ const logOut=async (req,res)=>{
             return token.token!== req.token
         })
         await req.user.save()
-        res.send(req.user)
+        res.status(200).send(req.user)
     }catch(e){
-        res.status(500).send()
+        res.status(240).send()
     }
 }
 
@@ -55,10 +55,25 @@ const logOutAll=async(req,res)=>{
         await req.user.save()
         res.status(200).send(req.user)
     }catch(e){
-        res.status(500).send()
+        res.status(240).send()
     }
 
 }
+
+const DeleteUser=(req,res)=>{
+    const id=req.user._id
+   userModel.findByIdAndDelete(id,(err,data)=>{
+       if(err) return res.status(240).send(err)
+       if (data) return res.status(200).json({deleted:data})
+   })
+
+}
 module.exports = {
-    getAllUsers,Register,LogIn,addingBMIToUser,logOut,logOutAll
+    getAllUsers,
+    Register,
+    LogIn,
+    addingBMIToUser,
+    logOut,
+    logOutAll,
+    DeleteUser
 }
