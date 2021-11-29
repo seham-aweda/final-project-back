@@ -33,15 +33,21 @@ const LogIn=async(req,res)=>{
 
         res.status(200).json({user,token})
     }catch(e){
-        res.status(240).send()
+        res.status(240).json()
     }
 }
 
-// const logOut=async (req,res)=>{
-//     try{
-//         req.user
-//     }
-// }
+const logOut=async (req,res)=>{
+    try{
+        req.user.tokens=req.user.tokens.filter(token=>{
+            return token.token!== req.token
+        })
+        await req.user.save()
+        res.send(req.user)
+    }catch(e){
+        res.status(500).send()
+    }
+}
 module.exports = {
-    getAllUsers,Register,LogIn,addingBMIToUser
+    getAllUsers,Register,LogIn,addingBMIToUser,logOut
 }
