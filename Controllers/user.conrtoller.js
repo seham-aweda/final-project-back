@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const userModel = require('../Models/user.model').User
 const bmiModel = require('../Models/user.model').BMI
 
@@ -9,13 +10,14 @@ const getAllUsers = async (req, res) => {
 }
 const Register = async (req, res) => {
     const user = new userModel(req.body)
+    user.lastVisit = new Date()
     try {
         await user.save()
         const token = await user.generateAuthToken()
 
         res.status(201).json({user, token})
     } catch (e) {
-        res.status(240).send(e)
+        res.status(240).send(e.message)
     }
 }
 
@@ -32,9 +34,9 @@ const LogIn = async (req, res) => {
         const user = await userModel.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
 
-        res.status(200).json({user, token})
+        res.status(200).send({user, token})
     } catch (e) {
-        res.status(240).send()
+        res.status(240).send(e.message)
     }
 }
 
@@ -46,7 +48,7 @@ const logOut = async (req, res) => {
         await req.user.save()
         res.status(200).send(req.user)
     } catch (e) {
-        res.status(240).send()
+        res.status(240).send(e.message)
     }
 }
 
@@ -56,20 +58,50 @@ const logOutAll = async (req, res) => {
         await req.user.save()
         res.status(200).send(req.user)
     } catch (e) {
-        res.status(240).send()
+        res.status(240).send(e.message)
     }
 
 }
 
+const UpdateUser=async (req,res)=>{
+    const id=req.user._id
+    console.log(req.body.password)
+   if(req.body.password!==undefined){
+       req.body.password=await bcrypt.hash( req.body.password,8)
+   }
+    console.log(req.body.password)
+    userModel.findByIdAndUpdate(id,req.body,{new:true,runValidators:true},(err,update)=>{
+        if(err) res.status(240).send(err)
+        if(update) res.status(200).send(update)
+    })
+}
+const DeleteUserbyAdmin = (req, res) => {
+    const {id} = req.params
+    userModel.findById(id, (err, data) => {
+        const bmiId = data.bmi
+
+        userModel.findByIdAndDelete(id, (err, user) => {
+            if (err) return res.status(240).send(err)
+            bmiModel.findByIdAndDelete(bmiId, (err, bmi) => {
+                if (err) return res.status(240).send(err)
+                if (bmi) return res.status(200).json({deletedUser: user, deletedBMI: bmi})
+            })
+        })
+    })
+}
 const DeleteUser = (req, res) => {
     const id = req.user._id
-    const bmiId = req.user.bmi
     userModel.findByIdAndDelete(id, (err, user) => {
         if (err) return res.status(240).send(err)
-        bmiModel.findByIdAndDelete(bmiId, (err, bmi) => {
-            if (err) return res.status(240).send(err)
-            if (bmi) return res.status(200).json({deletedUser: user, deletedBMI: bmi})
-        })
+        if (req.user.bmi) {
+            const bmiId = req.user.bmi
+            bmiModel.findByIdAndDelete(bmiId, (err, bmi) => {
+                if (err) return res.status(240).send(err)
+                if (bmi) return res.status(200).json({deletedUser: user, deletedBMI: bmi})
+            })
+        } else {
+            if (user) return res.status(200).json(user)
+        }
     })
 }
 
@@ -80,5 +112,7 @@ module.exports = {
     addingBMIToUser,
     logOut,
     logOutAll,
-    DeleteUser
+    UpdateUser,
+    DeleteUser,
+    DeleteUserbyAdmin
 }

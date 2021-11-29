@@ -20,7 +20,19 @@ const addBMI=(req,res)=>{
     })
 }
 
+const UpdateBMI=(req,res)=>{
+    const currentBMIId=req.user.bmi
+    bmiModel.findByIdAndUpdate(currentBMIId,req.body,{new:true,runValidators:true},(err,data)=>{
+        if(err) res.status(240).send(err)
+        if(data){
+            data.result=(req.body.weight/(Math.pow(req.body.height,2))).toFixed(3)
+            data.save()
+        }
+        return res.status(200).json({"updating": data})
+    })
+}
+
 module.exports = {
     addBMI,
-    getAllBMI
+    getAllBMI,UpdateBMI
 }
