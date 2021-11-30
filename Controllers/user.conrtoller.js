@@ -14,7 +14,7 @@ const getAllUsers = async (req, res) => {
                    unit: 'day'
                }).slice(0, 2) <= 7)
                 console.log(user.isActive)
-user.save()
+                 user.save()
             })
         return res.status(200).send(users)
         }
