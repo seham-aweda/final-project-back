@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/api/users',require('./Routes/user.route'))
 app.use('/api/bmi',require('./Routes/bmi.route'))
 
-mongoose.connect('mongodb://localhost/finalProject', {useNewUrlParser: true},()=>{
+mongoose.connect(`${process.env.DB_URL}`, {useNewUrlParser: true, useUnifiedTopology: true},()=>{
     console.log(('connected to DB'))
 })
 

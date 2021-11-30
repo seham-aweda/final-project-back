@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     await control.LogIn(req, res)
 })
-router.post('/updatingBMI/:userId/:bmiId', (req, res) => {
+router.post('/updatingBMI/:bmiId',auth, (req, res) => {
     control.addingBMIToUser(req, res)
 })
 router.post('/logout', auth, async (req, res) => {

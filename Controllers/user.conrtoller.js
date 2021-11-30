@@ -34,7 +34,8 @@ const Register = async (req, res) => {
 }
 
 const addingBMIToUser = (req, res) => {
-    const {userId, bmiId} = req.params
+    const {bmiId} = req.params
+    const userId=req.user._id
     userModel.findByIdAndUpdate(userId, {bmi: bmiId}, {new: true, runValidators: true}, (err, user) => {
         if (err) return res.status(240).send(err)
         return res.status(200).send(user)
