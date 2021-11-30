@@ -2,12 +2,11 @@ const express = require('express')
 const router = express.Router()
 const control = require('../Controllers/user.conrtoller')
 const auth = require("../middleware/auth");
-const formatDistanceToNow = require("date-fns/formatDistanceToNow");
 const authAdmin = require("../middleware/checkAdmin");
 const userModel = require('../Models/user.model').User
 
 router.get('/me', auth, async (req, res) => {
-    // console.log((formatDistanceToNow(req.user.lastVisit, { addSuffix: true })).slice(0,2))
+
     userModel.findById(req.user._id).populate('bmi').exec((err, data) => {
         if (err) return res.status(240).send(err)
         return res.status(200).send(data)
@@ -35,9 +34,9 @@ router.delete('/delete/me', auth, (req, res) => {
     control.DeleteUser(req, res)
 })
 router.delete('/delete/:id', authAdmin, (req, res) => {
-    control.DeleteUserbyAdmin(req, res)
+    control.DeleteUserByAdmin(req, res)
 })
-router.put('/update/me',auth,(req,res)=>{
-    control.UpdateUser(req,res)
+router.put('/update/me',auth,async(req,res)=>{
+    await control.UpdateUser(req,res)
 })
 module.exports = router

@@ -1,11 +1,22 @@
 const bcrypt = require("bcryptjs");
 const userModel = require('../Models/user.model').User
 const bmiModel = require('../Models/user.model').BMI
+const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 
 const getAllUsers = async (req, res) => {
     userModel.find({}).populate('bmi').exec((err, users) => {
         if (err) return res.status(240).send(err)
+        if(users){
+            users.map(user=>{
+                console.log(user.lastVisit)
+               user.isActive= (formatDistanceStrict(new Date(), user.lastVisit, {
+                   unit: 'day'
+               }).slice(0, 2) <= 7)
+                console.log(user.isActive)
+user.save()
+            })
         return res.status(200).send(users)
+        }
     })
 }
 const Register = async (req, res) => {
@@ -75,7 +86,7 @@ const UpdateUser=async (req,res)=>{
         if(update) res.status(200).send(update)
     })
 }
-const DeleteUserbyAdmin = (req, res) => {
+const DeleteUserByAdmin = (req, res) => {
     const {id} = req.params
     userModel.findById(id, (err, data) => {
         const bmiId = data.bmi
@@ -114,5 +125,5 @@ module.exports = {
     logOutAll,
     UpdateUser,
     DeleteUser,
-    DeleteUserbyAdmin
+    DeleteUserByAdmin
 }
