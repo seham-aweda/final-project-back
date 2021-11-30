@@ -3,6 +3,7 @@ const userModel = require('../Models/user.model').User
 const bmiModel = require('../Models/user.model').BMI
 const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 
+
 const getAllUsers = async (req, res) => {
     userModel.find({}).populate('bmi').exec((err, users) => {
         if (err) return res.status(240).send(err)
