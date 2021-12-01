@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
                 console.log(user.lastVisit)
                user.isActive= (formatDistanceStrict(new Date(), user.lastVisit, {
                    unit: 'day'
-               }).slice(0, 2) <= 0)
+               }).slice(0, 2) <= 7)
                 console.log(user.isActive)
                  user.save()
             })
