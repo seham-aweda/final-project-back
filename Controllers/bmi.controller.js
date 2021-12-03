@@ -13,7 +13,7 @@ const addBMI=(req,res)=>{
     bmiModel.create({weight, height}, (err, data) => {
         if (err) return res.send(err);
         if(data){
-            data.result=(weight/(Math.pow(height,2))).toFixed(3)
+            data.result=(weight/(Math.pow((height/100),2))).toFixed(3)
             data.save()
         return res.send(data);
         }
