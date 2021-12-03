@@ -25,7 +25,7 @@ const UpdateBMI=(req,res)=>{
     bmiModel.findByIdAndUpdate(currentBMIId,req.body,{new:true,runValidators:true},(err,data)=>{
         if(err) res.status(240).send(err)
         if(data){
-            data.result=(req.body.weight/(Math.pow(req.body.height,2))).toFixed(3)
+            data.result=(req.body.weight/(Math.pow(((req.body.height)/100),2))).toFixed(3)
             data.save()
         }
         return res.status(200).json({"updating": data})
