@@ -7,16 +7,16 @@ const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 const getAllUsers = async (req, res) => {
     await userModel.find({}).populate('bmi').exec((err, users) => {
         if (err) return res.status(240).send(err)
-        if(users){
-            users.map((user)=>{
+        if (users) {
+            users.map((user) => {
                 console.log(user.lastVisit)
-               user.isActive=  (formatDistanceStrict(new Date(), user.lastVisit, {
-                   unit: 'day'
-               }).slice(0, 2) <= 7)
+                user.isActive = (formatDistanceStrict(new Date(), user.lastVisit, {
+                    unit: 'day'
+                }).slice(0, 2) <= 7)
                 console.log(user.isActive)
-                 user.save()
+                user.save()
             })
-        return res.status(200).send(users)
+            return res.status(200).send(users)
         }
     })
 }
@@ -35,15 +35,14 @@ const Register = async (req, res) => {
 
 const addingBMIToUser = (req, res) => {
     const {bmiId} = req.params
-    const userId=req.user._id
-    bmiModel.findById(bmiId,(err,data)=>{
-        if(err) return res.status(240).send('there is no bmi like that')
-        if (data){
-
-    userModel.findByIdAndUpdate(userId, {bmi: bmiId}, {new: true, runValidators: true}, (err, user) => {
-        if (err) return res.status(240).send(err)
-        return res.status(200).send(user)
-    })
+    const userId = req.user._id
+    bmiModel.findById(bmiId, (err, data) => {
+        if (err) return res.status(240).send('there is no bmi like that')
+        if (data) {
+            userModel.findByIdAndUpdate(userId, {bmi: bmiId}, {new: true, runValidators: true}, (err, user) => {
+                if (err) return res.status(240).send(err)
+                return res.status(200).send(user)
+            })
         }
     })
 }
@@ -82,16 +81,16 @@ const logOutAll = async (req, res) => {
 
 }
 
-const UpdateUser=async (req,res)=>{
-    const id=req.user._id
+const UpdateUser = async (req, res) => {
+    const id = req.user._id
     console.log(req.body.password)
-   if(req.body.password!==undefined){
-       req.body.password=await bcrypt.hash( req.body.password,8)
-   }
+    if (req.body.password !== undefined) {
+        req.body.password = await bcrypt.hash(req.body.password, 8)
+    }
     console.log(req.body.password)
-    userModel.findByIdAndUpdate(id,req.body,{new:true,runValidators:true},(err,update)=>{
-        if(err) res.status(240).send(err)
-        if(update) res.status(200).send(update)
+    userModel.findByIdAndUpdate(id, req.body, {new: true, runValidators: true}, (err, update) => {
+        if (err) res.status(240).send(err)
+        if (update) res.status(200).send(update)
     })
 }
 const DeleteUserByAdmin = (req, res) => {
