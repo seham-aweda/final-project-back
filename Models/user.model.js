@@ -70,7 +70,7 @@ const BMISchema= new Schema({
         type:Number,
         required:true,
         min:0,
-        max:3
+        max:300
     },
     result:{
         type:Number
