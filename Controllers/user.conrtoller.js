@@ -4,11 +4,11 @@ const bmiModel = require('../Models/user.model').BMI
 const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 
 
-const getAllUsers = async (req, res) => {
+const getAllUsers =  (req, res) => {
     userModel.find({}).populate('bmi').exec((err, users) => {
         if (err) return res.status(240).send(err)
         if(users){
-            users.map(user=>{
+            users.map((user)=>{
                 console.log(user.lastVisit)
                user.isActive= (formatDistanceStrict(new Date(), user.lastVisit, {
                    unit: 'day'

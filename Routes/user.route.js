@@ -12,8 +12,8 @@ router.get('/me', auth, async (req, res) => {
         return res.status(200).send(data)
     })
 })
-router.get('/', async (req, res) => {
-    await control.getAllUsers(req, res)
+router.get('/', (req, res) => {
+    control.getAllUsers(req, res)
 })
 router.post('/register', async (req, res) => {
     await control.Register(req, res)
