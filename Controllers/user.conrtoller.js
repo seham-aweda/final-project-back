@@ -51,9 +51,10 @@ const LogIn = async (req, res) => {
     try {
         const user = await userModel.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
+        user.lastVisit = new Date()
         user.isActive = (formatDistanceStrict(new Date(), user.lastVisit, {
             unit: 'day'
-        }).slice(0, 2) <= 7)
+        }).slice(0, 2) < 7)
         console.log(user.isActive)
         user.save()
         res.status(200).send({user, token})
