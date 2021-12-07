@@ -24,10 +24,10 @@ router.post('/login', async (req, res) => {
 router.post('/updatingBMI/:bmiId',auth, (req, res) => {
     control.addingBMIToUser(req, res)
 })
-router.post('/logout', auth, async (req, res) => {
+router.put('/logout', auth, async (req, res) => {
     await control.logOut(req, res)
 })
-router.post('/logoutAll', auth, async (req, res) => {
+router.put('/logoutAll', auth, async (req, res) => {
     await control.logOutAll(req, res)
 })
 router.delete('/delete/me', auth, (req, res) => {
