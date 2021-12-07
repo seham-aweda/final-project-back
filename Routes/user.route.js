@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
 router.post('/updatingBMI/:bmiId',auth, (req, res) => {
     control.addingBMIToUser(req, res)
 })
-router.put('/logout', auth, async (req, res) => {
+router.get('/logout', auth, async (req, res) => {
     await control.logOut(req, res)
 })
 router.get('/logoutAll', auth, async (req, res) => {
