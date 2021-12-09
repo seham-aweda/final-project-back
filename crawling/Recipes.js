@@ -107,7 +107,7 @@ const autoScroll = async (page) => {
     })
 }
 
-        mongoose.connect(`mongodb+srv://SehamAweda:SlA12aweda@cluster0.slqov.mongodb.net/finalProject?retryWrites=true&w=majority`,()=>{
+        mongoose.connect(`${process.env.DB_URL}`,()=>{
     console.log(('connected to DB'))
 })
 getRecipes()
