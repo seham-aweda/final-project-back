@@ -39,4 +39,6 @@ router.delete('/delete/:id', authAdmin, (req, res) => {
 router.put('/update/me',auth,async(req,res)=>{
     await control.UpdateUser(req,res)
 })
+
+
 module.exports = router

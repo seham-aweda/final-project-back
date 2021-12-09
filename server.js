@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/api/users',require('./Routes/user.route'))
 app.use('/api/bmi',require('./Routes/bmi.route'))
+app.use('/api/recipe',require('./Routes/recipes.route'))
 
 mongoose.connect(`${process.env.DB_URL}`,()=>{
     console.log(('connected to DB'))
