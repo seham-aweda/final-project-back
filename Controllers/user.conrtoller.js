@@ -50,39 +50,46 @@ const addingBMIToUser = (req, res) => {
 }
 
 const addCurrentWeight = (req, res) => {
-    const {weight} = req.body
+    const {weight, date} = req.body
     const userId = req.user._id
     userModel.findById(userId, (err, user) => {
         if (err) return res.status(240).send('you didn\'t add an updated weight')
         if (user) {
-            let now = new Date()
-            let todayUpdate = user.weightTracker.find(updatedWeight => (updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear()))
-            if (todayUpdate) {
-                return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
-            } else {
-                userModel.findByIdAndUpdate(userId, {$push: {weightTracker: req.body}}, {
-                    new: true,
-                    runValidators: true
-                }, (err, user) => {
-                    if (err) return res.status(240).send(err)
-                    return res.status(200).send(user)
+                console.log(req.body.date)
+                let now = new Date()
+                let todayUpdate = user.weightTracker.find(updatedWeight => {
+                    console.log('updatedWeight.date',updatedWeight.date)
+                    console.log('now',now)
+                    return (updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear())
                 })
-            }
+                if (todayUpdate) {
+                    return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
+                } else {
+                    userModel.findByIdAndUpdate(userId, {$push: {weightTracker: req.body}}, {
+                        new: true,
+                        runValidators: true
+                    }, (err, user) => {
+                        if (err) return res.status(240).send(err)
+                        return res.status(200).send(user)
+                    })
+                }
+
+
         }
     })
 }
 
-const removeWeight=(req,res)=>{
-    const {weightID}=req.params
+const removeWeight = (req, res) => {
+    const {weightID} = req.params
     const userId = req.user._id
-    userModel.findById(userId,(err,user)=>{
+    userModel.findById(userId, (err, user) => {
         if (err) return res.status(240).send('no such user')
-        if (user){
-            let idFound=user.weightTracker.find(id=> id._id.toString()===weightID.toString())
+        if (user) {
+            let idFound = user.weightTracker.find(id => id._id.toString() === weightID.toString())
             console.log(idFound)
-            if(idFound===undefined) {
+            if (idFound === undefined) {
                 return res.status(240).send('no weightId like that for this user')
-            } else{
+            } else {
                 user.weightTracker = user.weightTracker.filter(weight => weight._id.toString() !== weightID.toString())
                 user.save()
                 return res.status(200).send(user)
@@ -211,5 +218,5 @@ module.exports = {
     logOutAll,
     UpdateUser,
     DeleteUser,
-    DeleteUserByAdmin, addCurrentWeight,removeWeight
+    DeleteUserByAdmin, addCurrentWeight, removeWeight
 }
