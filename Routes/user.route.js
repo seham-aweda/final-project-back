@@ -24,6 +24,12 @@ router.post('/login', async (req, res) => {
 router.post('/updatingBMI/:bmiId',auth, (req, res) => {
     control.addingBMIToUser(req, res)
 })
+router.put('/updatingWeight',auth, (req, res) => {
+    control.addCurrentWeight(req, res)
+})
+router.put('/DeleteWeight/:weightID',auth, (req, res) => {
+    control.removeWeight(req, res)
+})
 router.get('/logout', auth, async (req, res) => {
     await control.logOut(req, res)
 })

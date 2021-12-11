@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const userModel = require('../Models/user.model').User
 const bmiModel = require('../Models/user.model').BMI
+// const WeightModel = require('../Models/user.model').weightTracker
+
 const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 
 
@@ -12,7 +14,7 @@ const getAllUsers = async (req, res) => {
                 console.log(user.lastVisit)
                 user.isActive = (formatDistanceStrict(new Date(), user.lastVisit, {
                     unit: 'day'
-                }).slice(0, 2) <= 7)
+                }).slice(0, 2) <= 4)
                 console.log(user.isActive)
                 user.save()
             })
@@ -47,6 +49,78 @@ const addingBMIToUser = (req, res) => {
     })
 }
 
+const addCurrentWeight = (req, res) => {
+    const {weight} = req.body
+    const userId = req.user._id
+    userModel.findById(userId, (err, user) => {
+        if (err) return res.status(240).send('you didn\'t add an updated weight')
+        if (user) {
+            let now = new Date()
+            let todayUpdate = user.weightTracker.find(updatedWeight => (updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear()))
+            if (todayUpdate) {
+                return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
+            } else {
+                userModel.findByIdAndUpdate(userId, {$push: {weightTracker: req.body}}, {
+                    new: true,
+                    runValidators: true
+                }, (err, user) => {
+                    if (err) return res.status(240).send(err)
+                    return res.status(200).send(user)
+                })
+            }
+        }
+    })
+}
+
+const removeWeight=(req,res)=>{
+    const {weightID}=req.params
+    const userId = req.user._id
+    userModel.findById(userId,(err,user)=>{
+        if (err) return res.status(240).send('no such user')
+        if (user){
+            let idFound=user.weightTracker.find(id=> id._id.toString()===weightID.toString())
+            console.log(idFound)
+            if(idFound===undefined) {
+                return res.status(240).send('no weightId like that for this user')
+            } else{
+                user.weightTracker = user.weightTracker.filter(weight => weight._id.toString() !== weightID.toString())
+                user.save()
+                return res.status(200).send(user)
+            }
+        }
+    })
+}
+// const addingNewWeightToUser = (req, res) => {
+//     const {newWeightId} = req.params
+//     const userId = req.user._id
+//     WeightModel.findById(newWeightId, (err, data) => {
+//         if (err) return res.status(240).send('recently, you didn\'t add an updated weight')
+//         if (data) {
+//             WeightModel.find({}, (err, weights) => {
+//                 if (err) return res.status(240).send('something went wrong')
+//                 if (weights) {
+//                     let now = new Date()
+//                     let todayUpdate = weights.find(weight => (weight.date.getDate() === now.getDate() && weight.date.getMonth() === now.getMonth() && weight.date.getFullYear() === now.getFullYear()))
+//                     if (todayUpdate) {
+//                         return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
+//                     } else {
+//
+//                         userModel.findByIdAndUpdate(userId, {$push: {weightTracker: newWeightId}}, {
+//                             new: true,
+//                             runValidators: true
+//                         }, (err, user) => {
+//                             if (err) return res.status(240).send(err)
+//                             return res.status(200).send(user)
+//                         })
+//                     }
+//                 }
+//             })
+//         }
+//     })
+// }
+//  const deletingWeightFromUser=(req,res)=>{
+//
+//  }
 const LogIn = async (req, res) => {
     try {
         const user = await userModel.findByCredentials(req.body.email, req.body.password)
@@ -137,5 +211,5 @@ module.exports = {
     logOutAll,
     UpdateUser,
     DeleteUser,
-    DeleteUserByAdmin
+    DeleteUserByAdmin, addCurrentWeight,removeWeight
 }
