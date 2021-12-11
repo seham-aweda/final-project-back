@@ -55,7 +55,7 @@ const addCurrentWeight = (req, res) => {
         if (err) return res.status(240).send('you didn\'t add an updated weight')
         if (user) {
                 console.log(req.body.date)
-                let now = new Date()
+                let now = new Date(req.body.date)
                 let todayUpdate = user.weightTracker.find(updatedWeight => {
                     console.log('updatedWeight.date',updatedWeight.date)
                     console.log('now',now)
