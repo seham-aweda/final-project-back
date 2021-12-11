@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const userModel = require('../Models/user.model').User
 const bmiModel = require('../Models/user.model').BMI
-// const WeightModel = require('../Models/user.model').weightTracker
 
 const formatDistanceStrict = require('date-fns/formatDistanceStrict')
 
