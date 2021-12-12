@@ -61,12 +61,17 @@ const addCurrentWeight = (req, res) => {
                 if (todayUpdate) {
                     return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
                 } else {
+                    bmiModel.findByIdAndUpdate(user.bmi,{weight:weight},{ new: true,
+                        runValidators: true
+                },(err,data)=>{
+                        if(err) return res.status(240).send(err)
                     userModel.findByIdAndUpdate(userId, {$push: {weightTracker: req.body}}, {
                         new: true,
                         runValidators: true
                     }, (err, user) => {
                         if (err) return res.status(240).send(err)
                         return res.status(200).send(user)
+                    })
                     })
                 }
 
