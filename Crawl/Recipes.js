@@ -5,7 +5,7 @@ const recipeModel=require('../Models/recipe.model')
 require('dotenv').config()
 
 const URLRecipes = 'https://www.delicious.com.au/recipes/collections/gallery/60-healthy-dinners-you-can-cook-in-30-minutes/1vo4q819?page=60'
-// const EACH_RECIPE_PATH = "article > header > figure > div > div > a"
+
 const getRecipes = () => {
     puppeteer.launch({headless: false}).then(async (browser) => {
         let page = await browser.newPage()
@@ -16,8 +16,7 @@ const getRecipes = () => {
     })
 }
 const arrayOfLinkToRecipes = async (page) => {
-    // await page.waitForTimeout(2000)
-    // await autoScroll(page)
+
     await page.waitForSelector("article > header > figure > div > div > a > img.img-responsive.lead-image")
     const linksToGet = await page.evaluate(() => {
         let link= Array.from(document.querySelectorAll("article > header > figure > div > div > a")).map(element => {
@@ -68,15 +67,7 @@ const getDataFromLink = async (page, array) => {
 }
 
 const saveData=(RecipeObject)=>{
-    // recipeModel.create({
-    //           INGREDIENTS:RecipeObject.INGREDIENTS
-    //           // METHOD:RecipeObject.METHOD,
-    //           // TITLE:RecipeObject.TITLE,
-    //           // IMG:RecipeObject.IMG
-    //      }, function (err, data) {
-    //     if (err) console.log('err',err);
-    //     if(data) console.log(data)
-    // });
+
     const recipe = new recipeModel({
         ingredients:RecipeObject.INGREDIENTS,
         methods:RecipeObject.METHOD,
