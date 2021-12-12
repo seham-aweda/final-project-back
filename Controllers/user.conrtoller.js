@@ -52,15 +52,12 @@ const addCurrentWeight = (req, res) => {
     const {weight, date} = req.body
     const userId = req.user._id
     userModel.findById(userId, (err, user) => {
-        if (err) return res.status(240).send('you didn\'t add an updated weight')
+        if (err) return res.status(240).send('No such User')
         if (user) {
                 console.log(req.body.date)
                 let now = new Date()
-                let todayUpdate = user.weightTracker.find(updatedWeight => {
-                    console.log('updatedWeight.date',updatedWeight.date)
-                    console.log('now',now)
-                    return (updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear())
-                })
+                let todayUpdate = user.weightTracker.find(updatedWeight =>(updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear())
+                )
                 if (todayUpdate) {
                     return res.status(240).send('You Can Only Insert One Change Of Your Weight Per Day, Come Back Tomorrow')
                 } else {
