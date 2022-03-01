@@ -12,7 +12,6 @@ const auth=async(req,res,next)=>{
 
      req.token=token
      req.user=user
-        // res.status(200).send({"deleted": user})
     next()
 
     }catch(e){

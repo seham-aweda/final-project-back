@@ -10,11 +10,9 @@ const getAllUsers = async (req, res) => {
         if (err) return res.status(240).send(err)
         if (users) {
             users.map((user) => {
-                console.log(user.lastVisit)
                 user.isActive = (formatDistanceStrict(new Date(), user.lastVisit, {
                     unit: 'day'
                 }).slice(0, 2) <= 4)
-                console.log(user.isActive)
                 user.save()
             })
             return res.status(200).send(users)
@@ -27,7 +25,6 @@ const Register = async (req, res) => {
     try {
         await user.save()
         const token = await user.generateAuthToken()
-
         res.status(201).json({user, token})
     } catch (e) {
         res.status(240).send(e.message)
@@ -54,7 +51,6 @@ const addCurrentWeight = (req, res) => {
     userModel.findById(userId, (err, user) => {
         if (err) return res.status(240).send('No such User')
         if (user) {
-            console.log(req.body.date)
             let now = new Date()
             let todayUpdate = user.weightTracker.find(updatedWeight => (updatedWeight.date.getDate() === now.getDate() && updatedWeight.date.getMonth() === now.getMonth() && updatedWeight.date.getFullYear() === now.getFullYear())
             )
@@ -88,7 +84,6 @@ const removeWeight = (req, res) => {
         if (err) return res.status(240).send('no such user')
         if (user) {
             let idFound = user.weightTracker.find(id => id._id.toString() === weightID.toString())
-            console.log(idFound)
             if (idFound === undefined) {
                 return res.status(240).send('no weightId like that for this user')
             } else {
@@ -108,7 +103,6 @@ const LogIn = async (req, res) => {
         user.isActive = (formatDistanceStrict(new Date(), user.lastVisit, {
             unit: 'day'
         }).slice(0, 2) < 7)
-        console.log(user.isActive)
         user.save()
         res.status(200).send({user, token})
     } catch (e) {
@@ -141,11 +135,9 @@ const logOutAll = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
     const id = req.user._id
-    console.log(req.body.password)
     if (req.body.password !== undefined) {
         req.body.password = await bcrypt.hash(req.body.password, 8)
     }
-    console.log(req.body.password)
     userModel.findByIdAndUpdate(id, req.body, {new: true, runValidators: true}, (err, update) => {
         if (err) res.status(240).send(err)
         if (update) res.status(200).send(update)

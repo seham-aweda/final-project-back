@@ -33,7 +33,7 @@ const userSchema = new Schema({
         default: 0,
         validate(value) {
             if (value < 0) {
-                throw new Error('Age must be a postive number')
+                throw new Error('Age must be a positive number')
             }
         }
     },
@@ -117,7 +117,6 @@ userSchema.statics.findByCredentials = async (email, password) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
-    console.log(isMatch)
     if (isMatch === false) {
         throw new Error('Unable to login')
     }

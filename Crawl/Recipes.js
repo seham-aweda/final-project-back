@@ -34,8 +34,6 @@ const arrayOfLinkToRecipes = async (page) => {
         return arr
     })
 
-    // return(linksToGet)
-    // console.log('linksToGet',linksToGet)
     await getDataFromLink(page, linksToGet)
 }
 const getDataFromLink = async (page, array) => {
@@ -79,23 +77,6 @@ const saveData=(RecipeObject)=>{
         if(data) console.log(data)
     })
 
-}
-const autoScroll = async (page) => {
-    await page.evaluate(async () => {
-        await new Promise((resolve, reject) => {
-            let totalHeight = 0
-            let distance = 100
-            let timer = setInterval(() => {
-                let scrollHeight = document.body.scrollHeight
-                window.scrollBy(0, distance)
-                totalHeight += distance
-                if (totalHeight >= scrollHeight) {
-                    clearInterval(timer)
-                    resolve()
-                }
-            }, 100)
-        })
-    })
 }
 
         mongoose.connect(`${process.env.DB_URL}`,()=>{
